@@ -5,10 +5,26 @@ import 'package:nist_tes/app/const/app_assets.dart';
 import 'package:nist_tes/app/const/app_colors.dart';
 import 'package:nist_tes/app/const/app_styles.dart';
 import 'package:nist_tes/app/routes/app_routes.dart';
+import 'package:nist_tes/core/notifiers/auth_notifier.dart';
 import 'package:nist_tes/presentation/widgets/buttons/primary_button.dart';
+import 'package:provider/provider.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+
+
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String userEmail = '';
+  String userPassword = '';
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +62,7 @@ class LoginScreen extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Add forgot password functionality
+                    // Add your forgot password logic here
                   },
                   child: const Text('Forgot Password?',
                       style: TextStyle(color: AppColors.primaryColor)),
@@ -56,8 +72,19 @@ class LoginScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: PrimaryButton(
-                  ontap: () {
-                    context.go(AppRoutes.homeScreen);
+                  ontap: () async{
+                    try {
+                     await context.read<AuthenticationNotifier>().userLogin(userEmail: _emailController.text.trim(), userPassword: _passwordController.text);
+                      context.go(AppRoutes.homeScreen);
+                    } catch (e) {
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(e.toString()),
+                        ),
+                      );
+                      
+                    }
                   },
                   text: 'Sign In',
                 ),
