@@ -107,7 +107,7 @@ class _EventScreenState extends State<EventScreen> {
                         style: AppStyles.cardTitle,
                       ),
                     ),
-                    ...List.generate(10 ?? 0, (index) {
+                    ...List.generate(10, (index) {
                       return const EventCard();
                     }),
                   ],

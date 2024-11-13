@@ -20,7 +20,10 @@ class AppAssets {
   static const phoneIcon = 'assets/svg/phone.svg';
   static const profileIcon = 'assets/svg/profile.svg';
   static const settingIcon = 'assets/svg/settings.svg';
-  static const successLogo = 'assets/svg/success_logo.svg';
   static const teacherProfileIcon = 'assets/svg/teacher_profile.sgv';
   static const teachersIcon = 'assets/svg/teachers.svg';
+
+  //
+  static const successLogo = 'assets/svg/success_logo.svg';
+  static const errorIcon = 'assets/svg/error_logo.svg';
 }

@@ -4,9 +4,13 @@ import 'package:nist_tes/app/config/size_config.dart';
 import 'package:nist_tes/app/const/app_assets.dart';
 import 'package:nist_tes/app/const/app_colors.dart';
 import 'package:nist_tes/app/const/app_styles.dart';
+import 'package:nist_tes/core/model/teacher_model.dart';
+import 'package:nist_tes/core/notifiers/teacher_notifier.dart';
 import 'package:nist_tes/presentation/screens/home_screen/widgets/view_all_button.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/appbar/home_appbar.dart';
+import '../../widgets/shimmers/teacher_card_shimmer.dart';
 
 class CollegeWallSection extends StatelessWidget {
   const CollegeWallSection({super.key});
@@ -69,16 +73,16 @@ class CollegeWallSection extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Chip(
-                  backgroundColor: Colors.white,
-                  label: const Text('210', style: AppStyles.bodyDark),
-                  avatar: const Icon(FontAwesome.commenting,
-                      color: AppColors.primaryColor),
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(color: Colors.grey),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                ),
+                // Chip(
+                //   backgroundColor: Colors.white,
+                //   label: const Text('210', style: AppStyles.bodyDark),
+                //   avatar: const Icon(FontAwesome.commenting,
+                //       color: AppColors.primaryColor),
+                //   shape: RoundedRectangleBorder(
+                //     side: const BorderSide(color: Colors.grey),
+                //     borderRadius: BorderRadius.circular(24),
+                //   ),
+                // ),
               ],
             ),
           ],
@@ -228,25 +232,28 @@ class SectionTitle extends StatelessWidget {
 }
 
 class TeacherCard extends StatelessWidget {
-  const TeacherCard({super.key});
+  final TeacherModel teacherModel;
+  const TeacherCard({super.key, required this.teacherModel});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
         width: SizeConfig.screenWidth * 0.5,
-        child: const ListTile(
-          contentPadding: EdgeInsets.all(4),
+        child: ListTile(
+          contentPadding: const EdgeInsets.all(4),
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(
-                'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepSpTHS0O1o4G9umZ2gMu2PFOQF23j6JashpqGRrHkmOBcRyMuT5PAdruM1RzVhIaWmI&usqp=CAU'), // Update with your image path
+            backgroundImage: teacherModel.user.avatar != null
+                ? NetworkImage(teacherModel.user.avatar!)
+                : const NetworkImage(
+                    'https://www.pngfind.com/pngs/m/610-6104451_image-placeholder-png-user-profile-placeholder-image-png.png'),
             radius: 24,
           ),
           title: Text(
-            'Emma Watson',
+            teacherModel.user.name,
             style: AppStyles.cardBodyTitle,
           ),
           subtitle: Text(
-            'Microprocessor',
+            teacherModel.subjects?.first.name ?? "N/A",
             style: AppStyles.cardBodySubtitle,
           ),
         ));
@@ -305,19 +312,24 @@ class TeachersSection extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(
-            height: SizeConfig.heightMultiplier * 8,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: const [
-                TeacherCard(),
-                TeacherCard(),
-                TeacherCard(),
-                TeacherCard(),
-                TeacherCard(),
-              ],
-            ),
-          ),
+          Consumer<TeacherNotifier>(builder: (context, notifier, child) {
+            if (notifier.isLoading.value) {
+              return const ShimmerTeacherCard();
+            }
+
+            return SizedBox(
+              height: SizeConfig.heightMultiplier * 8,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: notifier.teacherList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return TeacherCard(
+                    teacherModel: notifier.teacherList[index],
+                  );
+                },
+              ),
+            );
+          }),
           const SizedBox(height: 8),
         ],
       ),

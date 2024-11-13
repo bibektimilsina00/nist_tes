@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nist_tes/app/const/app_styles.dart';
+import 'package:nist_tes/core/notifiers/teacher_notifier.dart';
 import 'package:nist_tes/presentation/screens/teachers_screen/widgets/teacher_detail_card.dart';
+import 'package:provider/provider.dart';
 
 import '../../widgets/appbar/home_appbar.dart';
 
@@ -27,11 +29,17 @@ class TeachersScreen extends StatelessWidget {
             ),
           ),
         ),
-        SliverList.builder(
-          itemBuilder: (context, index) {
-            return const TeacherDetailCard();
+        Consumer<TeacherNotifier>(
+          builder: (context, notifier, child) {
+            return SliverList.builder(
+              itemBuilder: (context, index) {
+                return TeacherDetailCard(
+                  teacher: notifier.teacherList[index],
+                );
+              },
+              itemCount: notifier.teacherList.length,
+            );
           },
-          itemCount: 10,
         ),
       ],
     );

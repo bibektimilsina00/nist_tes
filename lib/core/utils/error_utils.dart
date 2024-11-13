@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
 
+import '../../main.dart';
+import 'shared_preferences_util.dart';
+
 /// Extracts a user-friendly error message from various types of exceptions.
 ///
 /// - For DioException, tries to extract detailed error message from the response.
@@ -36,7 +39,7 @@ String getErrorMessage(dynamic exception) {
   return exception.toString();
 }
 
-void handleDioException(DioException e, {String? route}) {
+Future handleDioException(DioException e, {String? route}) async {
   String errorMessage = 'An unexpected error occurred';
 
   switch (e.type) {
@@ -54,10 +57,13 @@ void handleDioException(DioException e, {String? route}) {
       if (e.response != null) {
         try {
           if (e.response?.statusCode == 400) {
-            errorMessage = e.response!.data['detail'];
+            errorMessage = e.response!.data['message'];
             break;
           } else if (e.response?.statusCode == 401) {
             errorMessage = 'Unauthorized';
+            await SharedPreferencesUtil().clearToken();
+            navigatorKey.currentState
+                ?.pushNamedAndRemoveUntil('/login', (route) => false);
             break;
           } else if (e.response?.statusCode == 422) {
             errorMessage = e.response!.data['detail'][0]['msg'].toString();

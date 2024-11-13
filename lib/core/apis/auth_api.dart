@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 
-
 import '../../app/api_client/api_client.dart';
 import '../../app/routes/api_routes.dart';
 import '../utils/error_utils.dart';
@@ -10,7 +9,7 @@ class AuthenticationAPI {
 
   const AuthenticationAPI(this._apiClient);
 
-  Future<dynamic>  changePassword(
+  Future<dynamic> changePassword(
       {required String currentPassword, required String newPassword}) async {
     try {
       Response response = await _apiClient.post(
@@ -42,23 +41,13 @@ class AuthenticationAPI {
   Future<String> userLogin(
       {required String userEmail, required String userPassword}) async {
     try {
-      final Dio dio = Dio();
-      dio.options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
-      dio.options.headers['accept'] = 'application/json';
-
-      FormData formData = FormData.fromMap({
-        "username": userEmail,
+      Response response =
+          await _apiClient.post(ApiRoutes.baseUrl + ApiRoutes.login, data: {
+        "email": userEmail,
         "password": userPassword,
       });
-      Response response = await dio.post(
-        ApiRoutes.baseUrl + ApiRoutes.login,
-        data: formData,
-      );
-      if (response.statusCode == 200) {
-        return response.data['access_token'];
-      } else {
-        throw Exception('Failed to login');
-      }
+
+      return response.data['token'];
     } on DioException catch (e) {
       handleDioException(e);
       rethrow;

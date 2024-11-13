@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nist_tes/core/utils/shared_preferences_util.dart';
 
 import '../../app/api_client/api_client.dart';
 import '../apis/auth_api.dart';
 import '../utils/error_utils.dart';
-
 
 class AuthenticationNotifier with ChangeNotifier {
   final AuthenticationAPI _authenticationAPI;
@@ -13,14 +11,12 @@ class AuthenticationNotifier with ChangeNotifier {
   final ValueNotifier<bool> _isLoading = ValueNotifier<bool>(false);
   String _errorMessage = '';
   String userPhone = '';
-  
 
   AuthenticationNotifier(ApiClient apiClient)
       : _authenticationAPI = AuthenticationAPI(apiClient);
 
   String get errorMessage => _errorMessage;
   ValueNotifier<bool> get isLoading => _isLoading;
-
 
   Future<void> changePassword(
       {required String oldPassword, required String newPassword}) async {
@@ -36,24 +32,29 @@ class AuthenticationNotifier with ChangeNotifier {
     }
   }
 
+  Future<bool> isFirstTimeUse() async {
+    final isFirstTime = await SharedPreferencesUtil().getIsFirstTime();
+    if (isFirstTime) {
+      await SharedPreferencesUtil().setIsFirstTime(false);
+    }
+    return isFirstTime;
+  }
+
   Future<bool> isUserLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    final token = await SharedPreferencesUtil().getToken();
+
     return token?.isNotEmpty ?? false;
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('token');
+    await SharedPreferencesUtil().clearToken();
   }
 
   Future<void> sendOtp(
       {required String phone, String countryCode = '+977'}) async {
     _updateState(isLoading: true);
     try {
-      final response = await _authenticationAPI.sendOtp(
-          phone: phone, countryCode: countryCode);
-      
+      await _authenticationAPI.sendOtp(phone: phone, countryCode: countryCode);
     } catch (e) {
       _updateState(errorMessage: getErrorMessage(e));
     } finally {
@@ -65,8 +66,6 @@ class AuthenticationNotifier with ChangeNotifier {
     userPhone = phone;
     notifyListeners();
   }
-
-  
 
   Future<void> userLogin({
     required String userEmail,
@@ -101,8 +100,7 @@ class AuthenticationNotifier with ChangeNotifier {
   }
 
   Future<void> _setToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('token', token);
+    await SharedPreferencesUtil().setToken(token);
   }
 
   void _updateState({bool isLoading = false, String errorMessage = ''}) {

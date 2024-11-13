@@ -26,9 +26,9 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(AppColors.primaryColor),
-          foregroundColor: MaterialStateProperty.all(AppColors.textLight),
-          textStyle: MaterialStateProperty.all(AppStyles.bodyDark),
+          backgroundColor: WidgetStateProperty.all(AppColors.primaryColor),
+          foregroundColor: WidgetStateProperty.all(AppColors.textLight),
+          textStyle: WidgetStateProperty.all(AppStyles.bodyDark),
         ),
       ),
       colorScheme:
@@ -58,9 +58,9 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          backgroundColor: MaterialStateProperty.all(AppColors.primaryColor),
-          foregroundColor: MaterialStateProperty.all(AppColors.textLight),
-          textStyle: MaterialStateProperty.all(AppStyles.bodyLight),
+          backgroundColor: WidgetStateProperty.all(AppColors.primaryColor),
+          foregroundColor: WidgetStateProperty.all(AppColors.textLight),
+          textStyle: WidgetStateProperty.all(AppStyles.bodyLight),
         ),
       ),
       colorScheme:

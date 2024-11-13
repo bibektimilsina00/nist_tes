@@ -7,6 +7,7 @@ import 'package:nist_tes/app/const/app_styles.dart';
 import 'package:nist_tes/app/routes/app_routes.dart';
 import 'package:nist_tes/core/notifiers/auth_notifier.dart';
 import 'package:nist_tes/presentation/widgets/buttons/primary_button.dart';
+import 'package:nist_tes/presentation/widgets/dialogs/failure_dialog.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,9 +18,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
-
-
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -54,9 +52,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     .copyWith(color: AppColors.textDark, fontSize: 16),
               ),
               SizedBox(height: SizeConfig.blockSizeVertical * 5),
-              _buildTextField(context, 'Email', false),
+              _buildTextField(context, 'Email', false,
+                  controller: _emailController),
               SizedBox(height: SizeConfig.blockSizeVertical * 2),
-              _buildTextField(context, 'Password', true),
+              _buildTextField(context, 'Password', true,
+                  controller: _passwordController),
               SizedBox(height: SizeConfig.blockSizeVertical * 2),
               Align(
                 alignment: Alignment.centerRight,
@@ -72,18 +72,28 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: double.infinity,
                 child: PrimaryButton(
-                  ontap: () async{
+                  ontap: () async {
                     try {
-                     await context.read<AuthenticationNotifier>().userLogin(userEmail: _emailController.text.trim(), userPassword: _passwordController.text);
-                      context.go(AppRoutes.homeScreen);
-                    } catch (e) {
+                      await context.read<AuthenticationNotifier>().userLogin(
+                          userEmail: _emailController.text.trim(),
+                          userPassword: _passwordController.text);
 
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(e.toString()),
-                        ),
-                      );
-                      
+                      if (mounted) {
+                        context.go(AppRoutes.homeScreen);
+                      }
+                    } catch (e) {
+                      if (mounted) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return FailureDialog(
+                                  message: e.toString(),
+                                  buttonText: "Ok",
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  });
+                            });
+                      }
                     }
                   },
                   text: 'Sign In',
@@ -97,8 +107,10 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildTextField(BuildContext context, String label, bool isPassword) {
+  Widget _buildTextField(BuildContext context, String label, bool isPassword,
+      {TextEditingController? controller}) {
     return TextField(
+      controller: controller,
       obscureText: isPassword,
       decoration: InputDecoration(
         labelText: label,

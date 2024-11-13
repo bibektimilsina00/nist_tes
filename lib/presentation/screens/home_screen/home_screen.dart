@@ -2,11 +2,16 @@ import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:nist_tes/app/const/app_colors.dart';
+import 'package:nist_tes/core/notifiers/profile_notifier.dart';
+import 'package:nist_tes/core/notifiers/routine_notifier.dart';
+import 'package:nist_tes/core/notifiers/subject_notifier.dart';
+import 'package:nist_tes/core/notifiers/teacher_notifier.dart';
 import 'package:nist_tes/presentation/screens/class_routine_screen/class_routine_screen.dart';
 import 'package:nist_tes/presentation/screens/dashboard_screen/dashboard_screen.dart';
 import 'package:nist_tes/presentation/screens/event_screen/event_screen.dart';
 import 'package:nist_tes/presentation/screens/profile_screen/profile_screen.dart';
 import 'package:nist_tes/presentation/screens/teachers_screen/teachers_screen.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,6 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _indexSelected = 0;
 
   final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,6 +82,17 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ));
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      context.read<ProfileNotifier>().getMyProfile();
+      context.read<TeacherNotifier>().getTeachers();
+      context.read<SubjectNotifier>().getSubjects();
+      context.read<RoutineNotifier>().getRoutines();
+    });
+    super.initState();
   }
 
   void _onPageChange(int index) {

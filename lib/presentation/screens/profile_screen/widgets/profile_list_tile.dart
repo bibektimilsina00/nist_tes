@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 
 class ProfileListTile extends StatelessWidget {
   final String title;
-  final Widget? leading;
+  final IconData leading;
   final VoidCallback onPressed;
+  final Color color;
   const ProfileListTile(
-      {super.key, required this.title, this.leading, required this.onPressed});
+      {super.key,
+      required this.title,
+      required this.leading,
+      required this.onPressed,
+      this.color = Colors.grey});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,17 @@ class ProfileListTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: ListTile(
-          leading: leading,
+          leading: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.3),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(
+              leading,
+              color: color,
+            ),
+          ),
           title: Text(title),
           trailing: const Icon(Icons.arrow_forward_ios),
         ),

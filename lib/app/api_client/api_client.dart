@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nist_tes/core/utils/shared_preferences_util.dart';
 
 import '../routes/api_routes.dart';
 
@@ -54,8 +54,7 @@ class ApiClient {
   }
 
   Future<String?> getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('token');
+    return SharedPreferencesUtil().getToken();
   }
 
   Future<Response> post(String path, {Object? data}) async {
