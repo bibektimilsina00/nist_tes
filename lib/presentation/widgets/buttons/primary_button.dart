@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:nist_tes/app/const/app_styles.dart';
 
 class PrimaryButton extends StatelessWidget {
   final String text;
@@ -25,7 +24,6 @@ class PrimaryButton extends StatelessWidget {
       onPressed: ontap,
       child: Text(
         text,
-        style: AppStyles.primaryButtonText,
       ),
     );
   }

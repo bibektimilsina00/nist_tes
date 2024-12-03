@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:nist_tes/app/const/app_colors.dart';
-import 'package:nist_tes/app/const/app_styles.dart';
 
 class ShimmerRoutineDay extends StatelessWidget {
   const ShimmerRoutineDay({Key? key}) : super(key: key);
@@ -29,7 +27,6 @@ class ShimmerRoutineDay extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: const BoxDecoration(
-              color: AppColors.secondaryColor,
               shape: BoxShape.circle,
             ),
           ),
@@ -71,7 +68,6 @@ class ShimmerRoutineDay extends StatelessWidget {
       child: const Center(
         child: Text(
           '',
-          style: AppStyles.cardBodyTitle,
         ),
       ),
     );

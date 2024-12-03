@@ -1,6 +1,7 @@
 import 'package:nist_tes/core/notifiers/profile_notifier.dart';
 import 'package:nist_tes/core/notifiers/routine_notifier.dart';
 import 'package:nist_tes/core/notifiers/teacher_notifier.dart';
+import 'package:nist_tes/core/notifiers/wall_notifier.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -39,6 +40,13 @@ class AppProvider {
     ),
     ChangeNotifierProvider<RoutineNotifier>(
       create: (context) => RoutineNotifier(
+        Provider.of<ApiClient>(context, listen: false),
+        Provider.of<ConnectivityService>(context, listen: false),
+        Provider.of<CacheService>(context, listen: false),
+      ),
+    ),
+    ChangeNotifierProvider<WallNotifier>(
+      create: (context) => WallNotifier(
         Provider.of<ApiClient>(context, listen: false),
         Provider.of<ConnectivityService>(context, listen: false),
         Provider.of<CacheService>(context, listen: false),

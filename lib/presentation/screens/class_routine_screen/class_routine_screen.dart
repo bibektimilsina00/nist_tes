@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nist_tes/app/const/app_colors.dart';
-import 'package:nist_tes/app/const/app_styles.dart';
 import 'package:nist_tes/core/notifiers/routine_notifier.dart';
 import 'package:nist_tes/core/notifiers/subject_notifier.dart';
-import 'package:nist_tes/presentation/screens/class_routine_screen/routine_card.dart';
-import 'package:nist_tes/presentation/widgets/appbar/home_appbar.dart';
-import 'package:nist_tes/presentation/widgets/dimention_widget.dart';
+import 'package:nist_tes/presentation/screens/class_routine_screen/widgets/routine_card.dart';
 import 'package:provider/provider.dart';
 
 import '../../widgets/shimmers/routine_day_shimmer.dart';
@@ -15,68 +11,180 @@ class ClassRoutineScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return CustomScrollView(
+      physics: const BouncingScrollPhysics(),
       slivers: [
-        const HomeAppBar(),
         SliverToBoxAdapter(
-            child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 20,
-                spreadRadius: 1,
-              ),
-            ],
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                    color: AppColors.iconBackground, shape: BoxShape.circle),
-                child: const Icon(Icons.book_outlined,
-                    color: AppColors.primaryColor, size: 20),
-              ),
-              hSizedBox1,
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      "Subjects with codes",
-                      style: AppStyles.cardTitle,
-                    ),
-                  ),
-                  Consumer<SubjectNotifier>(
-                    builder: (context, notifier, child) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...notifier.subjectList.map(
-                            (subject) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 4),
-                              child: Text(
-                                "${subject.name} - (${subject.subjectCode})",
-                                style: AppStyles.bodyMediumDark,
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
-                    },
-                  )
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  theme.colorScheme.surface,
+                  theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
                 ],
               ),
-            ],
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: theme.shadowColor.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.book_outlined,
+                          size: 20,
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        "Subjects with codes",
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          letterSpacing: 0.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Consumer<SubjectNotifier>(
+                    builder: (context, notifier, child) {
+                      final sortedSubjects = List.from(notifier.subjectList)
+                        ..sort((a, b) {
+                          int aLength = (a.name + a.subjectCode).length;
+                          int bLength = (b.name + b.subjectCode).length;
+                          return aLength.compareTo(bLength);
+                        });
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: sortedSubjects.map((subject) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 6,
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(16),
+                                onTap: () {},
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topLeft,
+                                      end: Alignment.bottomRight,
+                                      colors: [
+                                        theme.colorScheme.surface,
+                                        theme
+                                            .colorScheme.surfaceContainerHighest
+                                            .withOpacity(0.5),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: theme.colorScheme.outlineVariant
+                                          .withOpacity(0.5),
+                                    ),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color:
+                                            theme.shadowColor.withOpacity(0.05),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 2),
+                                      ),
+                                    ],
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primary
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Icon(
+                                          Icons.book_outlined,
+                                          size: 16,
+                                          color: theme.colorScheme.primary,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Expanded(
+                                        child: Text(
+                                          subject.name,
+                                          style: theme.textTheme.titleSmall
+                                              ?.copyWith(
+                                            fontWeight: FontWeight.w500,
+                                            letterSpacing: 0.1,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: theme.colorScheme.primary
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Text(
+                                          subject.subjectCode,
+                                          style: theme.textTheme.labelLarge
+                                              ?.copyWith(
+                                            color: theme.colorScheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-        )),
+        ),
         Consumer<RoutineNotifier>(
           builder: (context, notifier, child) {
             if (notifier.isLoading.value) {
@@ -86,27 +194,35 @@ class ClassRoutineScreen extends StatelessWidget {
                   childCount: 5,
                 ),
               );
-            } else if (notifier.routineList.isEmpty) {
-              return const SliverToBoxAdapter(
+            }
+
+            if (notifier.routineList.isEmpty) {
+              return SliverFillRemaining(
                 child: Center(
-                  child: Text('No routines available'),
-                ),
-              );
-            } else {
-              return SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return RoutineDay(
-                      day: notifier.routineList[index].name.toUpperCase(),
-                      routineList: notifier.routineList[index].routineDetails,
-                    );
-                  },
-                  childCount: notifier.routineList.length,
+                  child: Text(
+                    'No routines available',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               );
             }
+
+            return SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: RoutineDay(
+                    day: notifier.routineList[index].name.toUpperCase(),
+                    routineList: notifier.routineList[index].routineDetails,
+                  ),
+                ),
+                childCount: notifier.routineList.length,
+              ),
+            );
           },
-        )
+        ),
       ],
     );
   }

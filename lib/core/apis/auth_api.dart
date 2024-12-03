@@ -32,7 +32,7 @@ class AuthenticationAPI {
 
   Future<dynamic> sendOtp(
       {required String phone, String countryCode = '+977'}) async {
-    return _performPostRequest(ApiRoutes.sendOtp, {
+    return _apiClient.post(ApiRoutes.sendOtp, data: {
       'phone_number': phone,
       'country_code': countryCode,
     });
@@ -56,7 +56,7 @@ class AuthenticationAPI {
 
   Future<dynamic> verifyOtp(
       {required String phone, required String otp}) async {
-    return _performPostRequest(ApiRoutes.verifyOtp, {
+    return _apiClient.post(ApiRoutes.verifyOtp, data: {
       'phone_number': phone,
       'otp': int.parse(otp),
     });
@@ -70,15 +70,5 @@ class AuthenticationAPI {
       errorMessage = e.response!.data['detail'];
     }
     throw Exception(errorMessage);
-  }
-
-  Future<dynamic> _performPostRequest(
-      String endpoint, Map<String, dynamic> data) async {
-    try {
-      final response = await _apiClient.dio.post(endpoint, data: data);
-      return response.data;
-    } on DioException catch (e) {
-      _handleError(e);
-    }
   }
 }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:nist_tes/app/const/app_assets.dart';
-import 'package:nist_tes/app/const/app_colors.dart';
-import 'package:nist_tes/app/const/app_styles.dart';
 import 'package:nist_tes/core/model/teacher_model.dart';
-import 'package:nist_tes/presentation/widgets/dimention_widget.dart';
 
 class TeacherDetailCard extends StatelessWidget {
   final TeacherModel teacher;
@@ -12,96 +9,152 @@ class TeacherDetailCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.surface,
+            theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+          ],
+        ),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+        ),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            spreadRadius: 1,
-            blurRadius: 1,
-            offset: const Offset(0, 1),
+            color: theme.shadowColor.withOpacity(0.05),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CircleAvatar(
-              backgroundImage: teacher.user.avatar == null
-                  ? const NetworkImage(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRepSpTHS0O1o4G9umZ2gMu2PFOQF23j6JashpqGRrHkmOBcRyMuT5PAdruM1RzVhIaWmI&usqp=CAU')
-                  : NetworkImage(teacher.user.avatar!),
-              radius: 24,
-              backgroundColor: Colors.grey,
-            ),
-            hSizedBox1,
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: () {},
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
               children: [
-                RichText(
-                  text: TextSpan(
+                Container(
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          theme.colorScheme.primary.withOpacity(0.5),
+                          theme.colorScheme.primary.withOpacity(0.2),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withOpacity(0.2),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 32,
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      backgroundImage: teacher.user.avatar != null
+                          ? NetworkImage(teacher.user.avatar!)
+                          : null,
+                      child: teacher.user.avatar == null
+                          ? Icon(Icons.person,
+                              color: theme.colorScheme.primary, size: 32)
+                          : null,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextSpan(
-                        text: teacher.user.name,
-                        style: AppStyles.cardBodyTitle.copyWith(
-                          fontSize: 12,
+                      Text(
+                        teacher.user.name,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.1,
                         ),
                       ),
-                      const WidgetSpan(
-                        child: SizedBox(
-                            width:
-                                8), // Space between the name and the microprocessor label
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          teacher.subjects?.first.name ?? 'N/A',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
-                      TextSpan(
-                        text: teacher.subjects?.first.name ?? 'N/A',
-                        style: AppStyles.cardBodySubtitle,
+                      const SizedBox(height: 12),
+                      TeacherInfoItem(
+                        icon: Icon(
+                          Icons.email_outlined,
+                          size: 16,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        text: teacher.user.email,
+                        theme: theme,
+                      ),
+                      const SizedBox(height: 6),
+                      TeacherInfoItem(
+                        icon: Icon(
+                          Icons.phone_outlined,
+                          size: 16,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        text: "+977 - ${teacher.user.phoneNumber}",
+                        theme: theme,
+                      ),
+                      const SizedBox(height: 6),
+                      TeacherInfoItem(
+                        icon: Icon(
+                          Icons.location_on_outlined,
+                          size: 16,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        text: teacher.user.address,
+                        theme: theme,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 4),
-                TeacherInfoItem(
-                  icon: const Icon(
-                    Icons.email,
-                    color: AppColors.primaryColor,
-                    size: 14,
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  text: teacher.user.email,
-                ),
-                const SizedBox(height: 4),
-                TeacherInfoItem(
-                  icon: const Icon(
-                    Icons.phone,
-                    color: AppColors.primaryColor,
-                    size: 14,
+                  child: SvgPicture.asset(
+                    AppAssets.settingIcon,
+                    colorFilter: ColorFilter.mode(
+                      theme.colorScheme.primary,
+                      BlendMode.srcIn,
+                    ),
                   ),
-                  text: "+977 - ${teacher.user.phoneNumber}",
-                ),
-                const SizedBox(height: 4),
-                TeacherInfoItem(
-                  icon: const Icon(
-                    Icons.location_pin,
-                    color: AppColors.primaryColor,
-                    size: 14,
-                  ),
-                  text: teacher.user.address,
                 ),
               ],
             ),
-            hSizedBox1,
-            Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: AppColors.iconBackground,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: SvgPicture.asset(AppAssets.settingIcon))
-          ],
+          ),
         ),
       ),
     );
@@ -111,10 +164,13 @@ class TeacherDetailCard extends StatelessWidget {
 class TeacherInfoItem extends StatelessWidget {
   final Widget icon;
   final String text;
+  final ThemeData theme;
+
   const TeacherInfoItem({
     super.key,
     required this.icon,
     required this.text,
+    required this.theme,
   });
 
   @override
@@ -122,10 +178,17 @@ class TeacherInfoItem extends StatelessWidget {
     return Row(
       children: [
         icon,
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: AppStyles.cardBodyTitle.copyWith(fontWeight: FontWeight.w500),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              letterSpacing: 0.1,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );

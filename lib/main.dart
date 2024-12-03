@@ -1,3 +1,4 @@
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:nist_tes/app/providers/app_providers.dart';
 import 'package:nist_tes/init.dart';
@@ -5,7 +6,6 @@ import 'package:provider/provider.dart';
 
 import 'app/config/size_config.dart';
 import 'app/const/app_constant.dart';
-import 'app/const/app_theme.dart';
 import 'app/routes/app_routes.dart';
 
 void main() async {
@@ -26,9 +26,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,
         title: AppConst.appname,
-        theme: AppTheme.lightTheme,
-        darkTheme: AppTheme.lightTheme,
         routerConfig: router,
+        theme: FlexThemeData.light(scheme: FlexScheme.brandBlue),
+        darkTheme: FlexThemeData.dark(scheme: FlexScheme.brandBlue),
       ),
     );
   }

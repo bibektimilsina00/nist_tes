@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nist_tes/app/const/app_assets.dart';
-import 'package:nist_tes/app/const/app_colors.dart';
 import 'package:nist_tes/app/routes/app_routes.dart';
 import 'package:nist_tes/presentation/widgets/buttons/primary_button.dart';
 
@@ -28,14 +27,12 @@ class OnBoardScreen extends StatelessWidget {
               text: const TextSpan(
                 text: 'Welcome to ',
                 style: TextStyle(
-                  color: AppColors.primaryColor,
                   fontSize: 24,
                 ),
                 children: <TextSpan>[
                   TextSpan(
                     text: 'NIST College',
                     style: TextStyle(
-                      color: AppColors.accentColor,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -63,7 +60,6 @@ class OnBoardScreen extends StatelessWidget {
                       context.go(AppRoutes.loginScreen);
                     }),
                 PrimaryButton(
-                    backgroudColor: AppColors.accentColor,
                     text: 'View Wall',
                     ontap: () {
                       context.go(AppRoutes.wallScreen);

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:nist_tes/app/config/size_config.dart';
 import 'package:nist_tes/app/const/app_assets.dart';
-import 'package:nist_tes/app/const/app_colors.dart';
-import 'package:nist_tes/app/const/app_styles.dart';
 import 'package:nist_tes/app/routes/app_routes.dart';
 import 'package:nist_tes/core/notifiers/auth_notifier.dart';
-import 'package:nist_tes/presentation/widgets/buttons/primary_button.dart';
-import 'package:nist_tes/presentation/widgets/dialogs/failure_dialog.dart';
+import 'package:nist_tes/presentation/widgets/text_field/primary_text_field.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,110 +14,149 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  String userEmail = '';
-  String userPassword = '';
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundLight,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SizedBox(height: SizeConfig.blockSizeVertical * 10),
-              Image.asset(AppAssets.collegeLogo,
-                  height: SizeConfig.blockSizeVertical * 15),
-              SizedBox(height: SizeConfig.blockSizeVertical * 5),
-              Text(
-                'Welcome Back!',
-                style: AppStyles.titleDark
-                    .copyWith(fontSize: 28, color: AppColors.primaryColor),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical * 1),
-              Text(
-                'Please sign in to continue',
-                style: AppStyles.bodyDark
-                    .copyWith(color: AppColors.textDark, fontSize: 16),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical * 5),
-              _buildTextField(context, 'Email', false,
-                  controller: _emailController),
-              SizedBox(height: SizeConfig.blockSizeVertical * 2),
-              _buildTextField(context, 'Password', true,
-                  controller: _passwordController),
-              SizedBox(height: SizeConfig.blockSizeVertical * 2),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    // Add your forgot password logic here
-                  },
-                  child: const Text('Forgot Password?',
-                      style: TextStyle(color: AppColors.primaryColor)),
-                ),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical * 4),
-              SizedBox(
-                width: double.infinity,
-                child: PrimaryButton(
-                  ontap: () async {
-                    try {
-                      await context.read<AuthenticationNotifier>().userLogin(
-                          userEmail: _emailController.text.trim(),
-                          userPassword: _passwordController.text);
-
-                      if (mounted) {
-                        context.go(AppRoutes.homeScreen);
-                      }
-                    } catch (e) {
-                      if (mounted) {
-                        showDialog(
-                            context: context,
-                            builder: (context) {
-                              return FailureDialog(
-                                  message: e.toString(),
-                                  buttonText: "Ok",
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  });
-                            });
-                      }
-                    }
-                  },
-                  text: 'Sign In',
-                ),
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical * 2),
+      body: Container(
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.surface,
+              theme.colorScheme.surfaceContainerHighest,
             ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  const SizedBox(height: 48),
+                  Image.asset(
+                    AppAssets.collegeLogo,
+                    height: 120,
+                  ),
+                  const SizedBox(height: 32),
+                  Text(
+                    'Welcome Back!',
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Please sign in to continue',
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  PrimaryTextField(
+                    keyboardType: TextInputType.emailAddress,
+                    controller: _emailController,
+                    hintText: "Email",
+                    label: 'Email',
+                    prefixIcon: Icons.email_outlined,
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Please enter your email';
+                      }
+                      return null;
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  PrimaryTextField(
+                    keyboardType: TextInputType.visiblePassword,
+                    controller: _passwordController,
+                    label: 'Password',
+                    isObscure: true,
+                    prefixIcon: Icons.lock_outline,
+                    validator: (value) {
+                      if (value?.isEmpty ?? true) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {},
+                      child: Text(
+                        'Forgot Password?',
+                        style: theme.textTheme.labelLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(double.infinity, 56),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    onPressed: _handleLogin,
+                    child: Text(
+                      'Sign In',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(BuildContext context, String label, bool isPassword,
-      {TextEditingController? controller}) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: AppColors.primaryColor),
-        fillColor: AppColors.inputFillLight,
-        filled: true,
-        border: AppStyles.inputBorder(AppColors.inputBorderLight),
-        enabledBorder: AppStyles.inputBorder(AppColors.inputBorderLight),
-        focusedBorder: AppStyles.inputBorder(AppColors.primaryColor),
-      ),
-      style: const TextStyle(color: AppColors.textDark),
-    );
+  void _handleLogin() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        await context.read<AuthenticationNotifier>().userLogin(
+              userEmail: _emailController.text.trim(),
+              userPassword: _passwordController.text,
+            );
+        if (mounted) context.go(AppRoutes.homeScreen);
+      } catch (e) {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text('Error'),
+              content: Text(e.toString()),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
+    }
   }
 }

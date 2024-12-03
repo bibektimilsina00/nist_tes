@@ -1,7 +1,6 @@
 import 'package:awesome_bottom_bar/awesome_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
-import 'package:nist_tes/app/const/app_colors.dart';
 import 'package:nist_tes/core/notifiers/profile_notifier.dart';
 import 'package:nist_tes/core/notifiers/routine_notifier.dart';
 import 'package:nist_tes/core/notifiers/subject_notifier.dart';
@@ -11,6 +10,7 @@ import 'package:nist_tes/presentation/screens/dashboard_screen/dashboard_screen.
 import 'package:nist_tes/presentation/screens/event_screen/event_screen.dart';
 import 'package:nist_tes/presentation/screens/profile_screen/profile_screen.dart';
 import 'package:nist_tes/presentation/screens/teachers_screen/teachers_screen.dart';
+import 'package:nist_tes/presentation/widgets/appbar/home_appbar.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -27,8 +27,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
+        appBar: const HomeAppBar(),
         body: PageView(
+          physics: const NeverScrollableScrollPhysics(),
           controller: _pageController,
           children: const [
             DashboardScreen(),
@@ -41,45 +44,65 @@ class _HomeScreenState extends State<HomeScreen> {
         bottomNavigationBar: Container(
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
+            color: Colors.transparent,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                theme.colorScheme.surface,
+                theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withOpacity(0.5),
+            ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 20,
-                spreadRadius: 1,
+                color: theme.shadowColor.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: BottomBarInspiredFancy(
             indexSelected: _indexSelected,
-            onTap: (index) {
-              _onPageChange(index);
-            },
-            backgroundColor: Colors.white,
-            color: Colors.grey,
-            colorSelected: AppColors.primaryColor,
-            items: const [
-              TabItem(
+            onTap: (index) => _onPageChange(index),
+            backgroundColor: Colors.transparent,
+            color: theme.colorScheme.onSurfaceVariant,
+            colorSelected: theme.colorScheme.primary,
+            items: [
+              const TabItem(
                 icon: Octicons.home,
                 title: 'Home',
               ),
-              TabItem(
+              const TabItem(
                 icon: SimpleLineIcons.graduation,
                 title: 'Teachers',
               ),
-              TabItem(
+              const TabItem(
                 icon: Feather.book,
                 title: 'Routine',
               ),
-              TabItem(
+              const TabItem(
                 icon: AntDesign.calendar,
                 title: 'Events',
               ),
-              TabItem(
+              const TabItem(
                 icon: FontAwesome5Regular.user_circle,
                 title: 'Profile',
               ),
-            ],
+            ]
+                .map((item) => TabItem(
+                      icon: item.icon,
+                      title: item.title,
+                    ))
+                .toList(),
+            titleStyle: theme.textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+            iconSize: 20,
           ),
         ));
   }

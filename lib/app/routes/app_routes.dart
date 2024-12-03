@@ -1,12 +1,14 @@
 import 'package:go_router/go_router.dart';
-import 'package:nist_tes/presentation/screens/profile_screen/academic_info_screen.dart';
+import 'package:nist_tes/presentation/screens/academic_info_screen/academic_info_screen.dart';
+import 'package:nist_tes/presentation/screens/notification_screen/notification_screen.dart';
+import 'package:nist_tes/presentation/screens/personal_info_screen/user_personal_info_screen.dart';
 import 'package:nist_tes/presentation/screens/profile_screen/account_setting_screen.dart';
 import 'package:nist_tes/presentation/screens/profile_screen/change_password_screen.dart';
 import 'package:nist_tes/presentation/screens/profile_screen/faq_screen.dart';
-import 'package:nist_tes/presentation/screens/profile_screen/user_personal_info_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/notifiers/auth_notifier.dart';
+import '../../presentation/screens/edit_profile_screen/edit_profile_screen.dart';
 import '../../presentation/screens/home_screen/home_screen.dart';
 import '../../presentation/screens/login_screen/login_screen.dart';
 import '../../presentation/screens/on_boarding_screen/on_boarding_screen.dart';
@@ -57,7 +59,7 @@ final router = GoRouter(
     ),
     GoRoute(
       path: AppRoutes.userPersonalInfoScreen,
-      builder: (context, state) => FillProfileScreen(),
+      builder: (context, state) => const UserPersonalInfoScreen(),
     ),
     GoRoute(
       path: AppRoutes.academicInfoScreen,
@@ -75,6 +77,14 @@ final router = GoRouter(
       path: AppRoutes.faqScreen,
       builder: (context, state) => const FaqScreen(),
     ),
+    GoRoute(
+      path: AppRoutes.editProfileScreen,
+      builder: (context, state) => const EditProfileScreen(),
+    ),
+    GoRoute(
+      path: AppRoutes.notificationScreen,
+      builder: (context, state) => const NotificationScreen(),
+    ),
   ],
 );
 
@@ -88,4 +98,6 @@ abstract class AppRoutes {
   static const changePasswordScreen = '/changePasswordScreen';
   static const accountSettingScreen = '/accountSettingScreen';
   static const faqScreen = '/faqScreen';
+  static const editProfileScreen = '/editProfileScreen';
+  static const notificationScreen = '/notificationScreen';
 }

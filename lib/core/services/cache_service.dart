@@ -6,25 +6,46 @@ class CacheService {
   static const String teacherProfileKey = 'teacherProfile';
   static const String subjectProfileKey = 'subjectProfile';
   static const String routineProfileKey = 'routineProfile';
+  static const String collegeWallKey = 'collegeWall';
 
   final cacheManager = DefaultCacheManager();
+  //clearCollegeWall
+  Future<void> clearCollegeWall() async {
+    await cacheManager.removeFile(collegeWallKey);
+  }
 
+  //clearCollegeWall
   Future<void> clearRoutineProfile() async {
     await cacheManager.removeFile(routineProfileKey);
   }
 
+  //clearCollegeWall
   Future<void> clearSubjectProfile() async {
     await cacheManager.removeFile(subjectProfileKey);
   }
 
+  //clearTeacherProfile
   Future<void> clearTeacherProfile() async {
     await cacheManager.removeFile(teacherProfileKey);
   }
 
+  //clearUserProfile
   Future<void> clearUserProfile() async {
     await cacheManager.removeFile(userProfileKey);
   }
 
+  //getCollegeWall
+  Future<String?> getCollegeWall() async {
+    try {
+      final file = await cacheManager.getSingleFile(collegeWallKey);
+      final contents = await file.readAsString();
+      return contents;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // getRoutineProfile
   Future<String?> getRoutineProfile() async {
     try {
       final file = await cacheManager.getSingleFile(routineProfileKey);
@@ -35,6 +56,7 @@ class CacheService {
     }
   }
 
+  // getSubjectProfile
   Future<String?> getSubjectProfile() async {
     try {
       final file = await cacheManager.getSingleFile(subjectProfileKey);
@@ -45,6 +67,7 @@ class CacheService {
     }
   }
 
+  // getTeacherProfile
   Future<String?> getTeacherProfile() async {
     try {
       final file = await cacheManager.getSingleFile(teacherProfileKey);
@@ -55,6 +78,7 @@ class CacheService {
     }
   }
 
+  // getUserProfile
   Future<String?> getUserProfile() async {
     try {
       final file = await cacheManager.getSingleFile(userProfileKey);
@@ -65,6 +89,15 @@ class CacheService {
     }
   }
 
+  // storeCollegeWall
+  Future<void> storeCollegeWall(String collegeWallJson) async {
+    await cacheManager.putFile(
+      collegeWallKey,
+      Uint8List.fromList(collegeWallJson.codeUnits),
+    );
+  }
+
+  // storeRoutineProfile
   Future<void> storeRoutineProfile(String routineProfileJson) async {
     await cacheManager.putFile(
       routineProfileKey,
@@ -72,6 +105,7 @@ class CacheService {
     );
   }
 
+  // storeSubjectProfile
   Future<void> storeSubjectProfile(String subjectProfileJson) async {
     await cacheManager.putFile(
       subjectProfileKey,
@@ -79,6 +113,7 @@ class CacheService {
     );
   }
 
+  // storeTeacherProfile
   Future<void> storeTeacherProfile(String teacherProfileJson) async {
     await cacheManager.putFile(
       teacherProfileKey,
@@ -86,6 +121,7 @@ class CacheService {
     );
   }
 
+  // storeUserProfile
   Future<void> storeUserProfile(String userProfileJson) async {
     await cacheManager.putFile(
       userProfileKey,
