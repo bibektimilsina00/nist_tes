@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:nist_tes/app/routes/app_routes.dart';
 import 'package:nist_tes/presentation/screens/teachers_screen/widgets/teacher_detail_card.dart';
 import 'package:provider/provider.dart';
 
@@ -108,6 +110,9 @@ class TeachersScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return TeacherDetailCard(
                     teacher: notifier.teacherList[index],
+                    onTap: () {
+                      context.push(AppRoutes.evaluationFormScreen);
+                    },
                   );
                 },
                 itemCount: notifier.teacherList.length,

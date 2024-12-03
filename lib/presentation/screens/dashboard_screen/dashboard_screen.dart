@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nist_tes/core/notifiers/wall_notifier.dart';
 import 'package:nist_tes/presentation/widgets/college_wall_card.dart';
 import 'package:provider/provider.dart';
 
-import 'widgets/notice_update_section.dart';
+import '../../../app/routes/app_routes.dart';
+import 'widgets/notice_section.dart';
 import 'widgets/section_title.dart';
 import 'widgets/teacher_section.dart';
 
@@ -74,7 +76,9 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 24),
               SectionTitle(
                 title: 'College Wall',
-                onViewAll: () {},
+                onViewAll: () {
+                  context.push(AppRoutes.collegeWallScreen);
+                },
               ),
               const SizedBox(height: 16),
               Consumer<WallNotifier>(
@@ -113,7 +117,9 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 24),
               SectionTitle(
                 title: 'Notice Updates',
-                onViewAll: () {},
+                onViewAll: () {
+                  context.push(AppRoutes.noticeScreen);
+                },
               ),
               const SizedBox(height: 16),
               const NoticeUpdatesSection(),

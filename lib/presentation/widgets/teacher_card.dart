@@ -13,7 +13,7 @@ class TeacherCard extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      width: SizeConfig.screenWidth * 0.45,
+      width: SizeConfig.screenWidth * 0.60,
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         gradient: LinearGradient(

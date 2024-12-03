@@ -1,5 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:nist_tes/presentation/screens/academic_info_screen/academic_info_screen.dart';
+import 'package:nist_tes/presentation/screens/college_wall_screen/college_wall_screen.dart';
+import 'package:nist_tes/presentation/screens/notice_screen/notice_screen.dart';
 import 'package:nist_tes/presentation/screens/notification_screen/notification_screen.dart';
 import 'package:nist_tes/presentation/screens/personal_info_screen/user_personal_info_screen.dart';
 import 'package:nist_tes/presentation/screens/profile_screen/account_setting_screen.dart';
@@ -9,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/notifiers/auth_notifier.dart';
 import '../../presentation/screens/edit_profile_screen/edit_profile_screen.dart';
+import '../../presentation/screens/evaluation_form_screen/evaluation_form_screen.dart';
 import '../../presentation/screens/home_screen/home_screen.dart';
 import '../../presentation/screens/login_screen/login_screen.dart';
 import '../../presentation/screens/on_boarding_screen/on_boarding_screen.dart';
@@ -85,6 +88,16 @@ final router = GoRouter(
       path: AppRoutes.notificationScreen,
       builder: (context, state) => const NotificationScreen(),
     ),
+    GoRoute(
+      path: AppRoutes.evaluationFormScreen,
+      builder: (context, state) => const EvaluationFormScreen(),
+    ),
+    GoRoute(
+        path: AppRoutes.noticeScreen,
+        builder: (context, state) => const NoticeAndUpdatesScreen()),
+    GoRoute(
+        path: AppRoutes.collegeWallScreen,
+        builder: (context, state) => const CollegeWallScreen()),
   ],
 );
 
@@ -100,4 +113,7 @@ abstract class AppRoutes {
   static const faqScreen = '/faqScreen';
   static const editProfileScreen = '/editProfileScreen';
   static const notificationScreen = '/notificationScreen';
+  static const evaluationFormScreen = '/evaluationFormScreen';
+  static const noticeScreen = '/noticeScreen';
+  static const collegeWallScreen = '/collegeWallScreen';
 }

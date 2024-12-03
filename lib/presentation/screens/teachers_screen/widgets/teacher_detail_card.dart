@@ -5,7 +5,9 @@ import 'package:nist_tes/core/model/teacher_model.dart';
 
 class TeacherDetailCard extends StatelessWidget {
   final TeacherModel teacher;
-  const TeacherDetailCard({super.key, required this.teacher});
+  final VoidCallback onTap;
+  const TeacherDetailCard(
+      {super.key, required this.teacher, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -38,41 +40,39 @@ class TeacherDetailCard extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {},
+          onTap: onTap,
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Row(
               children: [
                 Container(
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          theme.colorScheme.primary.withOpacity(0.5),
-                          theme.colorScheme.primary.withOpacity(0.2),
-                        ],
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withOpacity(0.2),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
-                        ),
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.colorScheme.primary.withOpacity(0.5),
+                        theme.colorScheme.primary.withOpacity(0.2),
                       ],
                     ),
-                    child: CircleAvatar(
-                      radius: 32,
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      backgroundImage: teacher.user.avatar != null
-                          ? NetworkImage(teacher.user.avatar!)
-                          : null,
-                      child: teacher.user.avatar == null
-                          ? Icon(Icons.person,
-                              color: theme.colorScheme.primary, size: 32)
-                          : null,
-                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withOpacity(0.2),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    radius: 32,
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    backgroundImage: teacher.user.avatar != null
+                        ? NetworkImage(teacher.user.avatar!)
+                        : null,
+                    child: teacher.user.avatar == null
+                        ? Icon(Icons.person,
+                            color: theme.colorScheme.primary, size: 32)
+                        : null,
                   ),
                 ),
                 const SizedBox(width: 16),

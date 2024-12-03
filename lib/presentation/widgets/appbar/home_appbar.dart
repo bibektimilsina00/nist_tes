@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:nist_tes/app/routes/app_routes.dart';
-import 'package:nist_tes/core/model/user_model.dart';
-import 'package:nist_tes/core/notifiers/profile_notifier.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/routes/app_routes.dart';
+import '../../../core/model/user_model.dart';
+import '../../../core/notifiers/profile_notifier.dart';
 import '../shimmers/home_app_bar_shimmer.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -149,7 +150,7 @@ class HomeAppBarContent extends StatelessWidget {
     );
   }
 
-  Widget _buildNotificationButton(ThemeData theme, context) {
+  Widget _buildNotificationButton(ThemeData theme, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -172,7 +173,7 @@ class HomeAppBarContent extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () {
-            context.go(AppRoutes.notificationScreen);
+            context.push(AppRoutes.notificationScreen);
           },
           child: Padding(
             padding: const EdgeInsets.all(12),
