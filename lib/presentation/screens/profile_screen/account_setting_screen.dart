@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nist_tes/app/routes/app_routes.dart';
+import 'package:provider/provider.dart';
+
+import '../../../app/enum/enum.dart';
+import '../../../core/notifiers/theme/theme_notifier.dart';
 
 class AccountSettingScreen extends StatefulWidget {
   const AccountSettingScreen({super.key});
@@ -12,7 +16,7 @@ class AccountSettingScreen extends StatefulWidget {
 class _AccountSettingScreenState extends State<AccountSettingScreen> {
   bool _notificationsEnabled = true;
   bool _emailNotifications = true;
-  bool _darkMode = false;
+  final bool _darkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -149,14 +153,75 @@ class _AccountSettingScreenState extends State<AccountSettingScreen> {
                   _buildSettingsSection(
                     title: 'Appearance',
                     children: [
-                      _buildSwitchTile(
-                        icon: Icons.dark_mode_outlined,
-                        title: 'Dark Mode',
-                        value: _darkMode,
-                        onChanged: (value) {
-                          setState(() => _darkMode = value);
+                      Consumer<ThemeNotifier>(
+                        builder: (context, themeNotifier, child) {
+                          return Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary
+                                            .withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Icon(
+                                        Icons.dark_mode_outlined,
+                                        size: 20,
+                                        color: theme.colorScheme.primary,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      'Theme Mode',
+                                      style:
+                                          theme.textTheme.titleSmall?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+                                SegmentedButton<AppThemeMode>(
+                                  segments: const [
+                                    ButtonSegment(
+                                      value: AppThemeMode.light,
+                                      icon: Icon(Icons.light_mode),
+                                      label: Text('Light'),
+                                    ),
+                                    ButtonSegment(
+                                      value: AppThemeMode.system,
+                                      icon: Icon(Icons.smartphone),
+                                      label: Text('System'),
+                                    ),
+                                    ButtonSegment(
+                                      value: AppThemeMode.dark,
+                                      icon: Icon(Icons.dark_mode),
+                                      label: Text('Dark'),
+                                    ),
+                                  ],
+                                  selected: {themeNotifier.themeMode},
+                                  onSelectionChanged:
+                                      (Set<AppThemeMode> selection) {
+                                    themeNotifier.setThemeMode(selection.first);
+                                  },
+                                  style: ButtonStyle(
+                                    side: WidgetStateProperty.all(
+                                      BorderSide(
+                                        color: theme.colorScheme.outlineVariant
+                                            .withOpacity(0.5),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                         },
-                        theme: theme,
                       ),
                     ],
                     theme: theme,

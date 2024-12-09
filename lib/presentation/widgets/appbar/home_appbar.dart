@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../../core/model/user_model.dart';
-import '../../../core/notifiers/profile_notifier.dart';
+import '../../../core/notifiers/profile/profile_notifier.dart';
 import '../shimmers/home_app_bar_shimmer.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -47,7 +47,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         child: FlexibleSpaceBar(
           background: Consumer<ProfileNotifier>(
             builder: (context, notifier, child) {
-              return notifier.isLoading.value || notifier.userProfile == null
+              return notifier.isLoading || notifier.userProfile == null
                   ? const HomeAppBarShimmer()
                   : HomeAppBarContent(userModel: notifier.userProfile!);
             },

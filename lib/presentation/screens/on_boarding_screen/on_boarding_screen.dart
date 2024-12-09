@@ -62,7 +62,7 @@ class OnBoardScreen extends StatelessWidget {
                 PrimaryButton(
                     text: 'View Wall',
                     ontap: () {
-                      context.go(AppRoutes.wallScreen);
+                      context.go(AppRoutes.collegeWallScreen);
                     })
               ],
             ),

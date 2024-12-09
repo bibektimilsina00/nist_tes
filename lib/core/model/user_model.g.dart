@@ -23,7 +23,7 @@ class UserModelAdapter extends TypeAdapter<UserModel> {
       phoneNumber: fields[3] as String,
       avatar: fields[4] as String?,
       address: fields[5] as String,
-      role: fields[6] as String,
+      role: fields[6] as UserRole,
       student: fields[7] as StudentModel?,
       teacher: fields[8] as TeacherModel?,
     );
@@ -75,7 +75,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       phoneNumber: json['phoneNumber'] as String,
       avatar: json['avatar'] as String?,
       address: json['address'] as String,
-      role: json['role'] as String,
+      role: $enumDecode(_$UserRoleEnumMap, json['role']),
       student: json['student'] == null
           ? null
           : StudentModel.fromJson(json['student'] as Map<String, dynamic>),
@@ -91,7 +91,12 @@ Map<String, dynamic> _$UserModelToJson(UserModel instance) => <String, dynamic>{
       'phoneNumber': instance.phoneNumber,
       'avatar': instance.avatar,
       'address': instance.address,
-      'role': instance.role,
+      'role': _$UserRoleEnumMap[instance.role]!,
       'student': instance.student?.toJson(),
       'teacher': instance.teacher?.toJson(),
     };
+
+const _$UserRoleEnumMap = {
+  UserRole.student: 'student',
+  UserRole.teacher: 'teacher',
+};

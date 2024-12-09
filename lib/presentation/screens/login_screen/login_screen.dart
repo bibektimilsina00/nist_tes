@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nist_tes/app/const/app_assets.dart';
 import 'package:nist_tes/app/routes/app_routes.dart';
-import 'package:nist_tes/core/notifiers/auth_notifier.dart';
 import 'package:nist_tes/presentation/widgets/text_field/primary_text_field.dart';
 import 'package:provider/provider.dart';
+
+import '../../../core/notifiers/auth/auth_notifier.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

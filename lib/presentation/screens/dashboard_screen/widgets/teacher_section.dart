@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../app/config/size_config.dart';
-import '../../../../core/notifiers/teacher_notifier.dart';
+import '../../../../core/notifiers/teacher/teacher_notifier.dart';
 import '../../../widgets/shimmers/teacher_card_shimmer.dart';
 import '../../../widgets/teacher_card.dart';
 
@@ -71,11 +71,11 @@ class TeachersSection extends StatelessWidget {
           const SizedBox(height: 16),
           Consumer<TeacherNotifier>(
             builder: (context, notifier, child) {
-              if (notifier.isLoading.value) {
+              if (notifier.isLoading) {
                 return const ShimmerTeacherCard();
               }
 
-              if (notifier.teacherList.isEmpty) {
+              if (notifier.teachers.isEmpty) {
                 return Center(
                   child: Text(
                     'No teachers available',
@@ -91,15 +91,14 @@ class TeachersSection extends StatelessWidget {
                 child: ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   scrollDirection: Axis.horizontal,
-                  itemCount: notifier.teacherList.length,
+                  itemCount: notifier.teachers.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Padding(
                       padding: EdgeInsets.only(
-                        right:
-                            index != notifier.teacherList.length - 1 ? 12 : 0,
+                        right: index != notifier.teachers.length - 1 ? 12 : 0,
                       ),
                       child: TeacherCard(
-                        teacherModel: notifier.teacherList[index],
+                        teacherModel: notifier.teachers[index],
                       ),
                     );
                   },

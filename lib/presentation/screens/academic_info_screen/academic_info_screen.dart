@@ -61,7 +61,7 @@ class AcademicInfoScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Computer Engineering',
+                      'Bsc. CSIT',
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         letterSpacing: 0.2,

@@ -6,7 +6,9 @@ import 'package:provider/provider.dart';
 
 import 'app/config/size_config.dart';
 import 'app/const/app_constant.dart';
+import 'app/enum/enum.dart';
 import 'app/routes/app_routes.dart';
+import 'core/notifiers/theme/theme_notifier.dart';
 
 void main() async {
   await init();
@@ -23,12 +25,21 @@ class MyApp extends StatelessWidget {
     SizeConfig().init(context);
     return MultiProvider(
       providers: AppProvider.providers,
-      child: MaterialApp.router(
-        debugShowCheckedModeBanner: false,
-        title: AppConst.appname,
-        routerConfig: router,
-        theme: FlexThemeData.light(scheme: FlexScheme.brandBlue),
-        darkTheme: FlexThemeData.dark(scheme: FlexScheme.brandBlue),
+      child: Consumer<ThemeNotifier>(
+        builder: (context, themeNotifier, child) {
+          return MaterialApp.router(
+            debugShowCheckedModeBanner: false,
+            title: AppConst.appname,
+            routerConfig: router,
+            theme: FlexThemeData.light(scheme: FlexScheme.brandBlue),
+            darkTheme: FlexThemeData.dark(scheme: FlexScheme.brandBlue),
+            themeMode: switch (themeNotifier.themeMode) {
+              AppThemeMode.light => ThemeMode.light,
+              AppThemeMode.dark => ThemeMode.dark,
+              AppThemeMode.system => ThemeMode.system,
+            },
+          );
+        },
       ),
     );
   }

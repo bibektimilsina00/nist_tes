@@ -28,7 +28,8 @@ class UserModel extends HiveObject {
   final String address;
 
   @HiveField(6)
-  final String role;
+  @JsonKey(name: 'role')
+  final UserRole role;
 
   @HiveField(7)
   final StudentModel? student;
@@ -52,4 +53,13 @@ class UserModel extends HiveObject {
       _$UserModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
+}
+
+@JsonEnum(valueField: 'value')
+enum UserRole {
+  student('student'),
+  teacher('teacher');
+
+  final String value;
+  const UserRole(this.value);
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nist_tes/core/notifiers/routine_notifier.dart';
-import 'package:nist_tes/core/notifiers/subject_notifier.dart';
+import 'package:nist_tes/core/notifiers/routine/routine_notifier.dart';
+import 'package:nist_tes/core/notifiers/subject/subject_notifier.dart';
 import 'package:nist_tes/presentation/screens/class_routine_screen/widgets/routine_card.dart';
 import 'package:provider/provider.dart';
 
@@ -72,7 +72,7 @@ class ClassRoutineScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   Consumer<SubjectNotifier>(
                     builder: (context, notifier, child) {
-                      final sortedSubjects = List.from(notifier.subjectList)
+                      final sortedSubjects = List.from(notifier.subjects)
                         ..sort((a, b) {
                           int aLength = (a.name + a.subjectCode).length;
                           int bLength = (b.name + b.subjectCode).length;
@@ -187,7 +187,7 @@ class ClassRoutineScreen extends StatelessWidget {
         ),
         Consumer<RoutineNotifier>(
           builder: (context, notifier, child) {
-            if (notifier.isLoading.value) {
+            if (notifier.isLoading) {
               return SliverList(
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => const ShimmerRoutineDay(),
@@ -196,7 +196,7 @@ class ClassRoutineScreen extends StatelessWidget {
               );
             }
 
-            if (notifier.routineList.isEmpty) {
+            if (notifier.routines.isEmpty) {
               return SliverFillRemaining(
                 child: Center(
                   child: Text(
@@ -214,11 +214,11 @@ class ClassRoutineScreen extends StatelessWidget {
                 (context, index) => Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: RoutineDay(
-                    day: notifier.routineList[index].name.toUpperCase(),
-                    routineList: notifier.routineList[index].routineDetails,
+                    day: notifier.routines[index].name.toUpperCase(),
+                    routineList: notifier.routines[index].routineDetails,
                   ),
                 ),
-                childCount: notifier.routineList.length,
+                childCount: notifier.routines.length,
               ),
             );
           },

@@ -7,6 +7,7 @@ class CacheService {
   static const String subjectProfileKey = 'subjectProfile';
   static const String routineProfileKey = 'routineProfile';
   static const String collegeWallKey = 'collegeWall';
+  static const String eventKey = 'event';
 
   final cacheManager = DefaultCacheManager();
   //clearCollegeWall
@@ -49,6 +50,17 @@ class CacheService {
   Future<String?> getRoutineProfile() async {
     try {
       final file = await cacheManager.getSingleFile(routineProfileKey);
+      final contents = await file.readAsString();
+      return contents;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // getEvent
+  Future<String?> getEvent() async {
+    try {
+      final file = await cacheManager.getSingleFile(eventKey);
       final contents = await file.readAsString();
       return contents;
     } catch (e) {
@@ -102,6 +114,13 @@ class CacheService {
     await cacheManager.putFile(
       routineProfileKey,
       Uint8List.fromList(routineProfileJson.codeUnits),
+    );
+  }
+  // storeEvent
+  Future<void> storeEvent(String eventJson) async {
+    await cacheManager.putFile(
+      eventKey,
+      Uint8List.fromList(eventJson.codeUnits),
     );
   }
 

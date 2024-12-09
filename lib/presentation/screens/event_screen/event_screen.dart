@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nist_tes/core/notifiers/event/event_notifier.dart';
 import 'package:nist_tes/presentation/screens/event_screen/event_card.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class EventScreen extends StatefulWidget {
@@ -13,12 +15,15 @@ class _EventScreenState extends State<EventScreen> {
   late Map<DateTime, List<String>> selectedEvents;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return CustomScrollView(
+      controller: _scrollController,
+      physics: const BouncingScrollPhysics(),
       slivers: <Widget>[
         SliverToBoxAdapter(
           child: Container(
@@ -144,40 +149,83 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ),
         ),
-        SliverList(
-          delegate: SliverChildListDelegate([
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: Text(
-                      'Upcoming Events',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ),
-                  ...List.generate(10, (index) => const EventCard()),
-                ],
+
+        // Title section
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Text(
+              'Upcoming Events',
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.2,
               ),
             ),
-          ]),
+          ),
+        ),
+
+        Consumer<EventNotifier>(
+          builder: (context, notifier, child) {
+            if (notifier.isLoading && notifier.events.isEmpty) {
+              return const SliverFillRemaining(
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (!notifier.isLoading && notifier.events.isEmpty) {
+              return const SliverFillRemaining(
+                child: Center(child: Text('No events found')),
+              );
+            }
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    if (index == notifier.events.length) {
+                      if (notifier.isLoading) {
+                        return const Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    }
+
+                    return EventCard(event: notifier.events[index]);
+                  },
+                  childCount:
+                      notifier.events.length + (notifier.isLoading ? 1 : 0),
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
   }
 
   @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     selectedEvents = {};
+    _scrollController.addListener(_onScroll);
   }
 
   List<String> _getEventsForDay(DateTime day) {
     return selectedEvents[day] ?? [];
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      context.read<EventNotifier>().loadMore();
+    }
   }
 }

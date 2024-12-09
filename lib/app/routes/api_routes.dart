@@ -10,4 +10,6 @@ abstract class ApiRoutes {
   static const String subjects = '/subjects/section/';
   static const String routines = '/class-routines/section/';
   static const String collegeWallPublic = '/college-wall-posts/public/';
+  static const String events = '/events/';
+  static const String uploadProfilePicture = '/user/upload/profile-picture/';
 }

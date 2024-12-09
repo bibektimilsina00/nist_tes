@@ -4,7 +4,7 @@ import 'package:nist_tes/app/routes/app_routes.dart';
 import 'package:nist_tes/presentation/screens/teachers_screen/widgets/teacher_detail_card.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/notifiers/teacher_notifier.dart';
+import '../../../core/notifiers/teacher/teacher_notifier.dart';
 
 class TeachersScreen extends StatelessWidget {
   const TeachersScreen({super.key});
@@ -83,7 +83,7 @@ class TeachersScreen extends StatelessWidget {
         ),
         Consumer<TeacherNotifier>(
           builder: (context, notifier, child) {
-            if (notifier.isLoading.value) {
+            if (notifier.isLoading) {
               return const SliverFillRemaining(
                 child: Center(
                   child: CircularProgressIndicator(),
@@ -91,7 +91,7 @@ class TeachersScreen extends StatelessWidget {
               );
             }
 
-            if (notifier.teacherList.isEmpty) {
+            if (notifier.teachers.isEmpty) {
               return SliverFillRemaining(
                 child: Center(
                   child: Text(
@@ -109,13 +109,13 @@ class TeachersScreen extends StatelessWidget {
               sliver: SliverList.builder(
                 itemBuilder: (context, index) {
                   return TeacherDetailCard(
-                    teacher: notifier.teacherList[index],
+                    teacher: notifier.teachers[index],
                     onTap: () {
                       context.push(AppRoutes.evaluationFormScreen);
                     },
                   );
                 },
-                itemCount: notifier.teacherList.length,
+                itemCount: notifier.teachers.length,
               ),
             );
           },

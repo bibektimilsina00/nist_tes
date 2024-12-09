@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nist_tes/core/notifiers/profile/profile_notifier.dart';
+import 'package:provider/provider.dart';
+
+import '../../widgets/network_image_widget.dart';
 
 class InfoItem {
   final String label;
@@ -24,100 +28,119 @@ class UserPersonalInfoScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    theme.colorScheme.surface,
-                    theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
-                  ],
+      body: Consumer<ProfileNotifier>(builder: (context, notifier, child) {
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      theme.colorScheme.surface,
+                      theme.colorScheme.surfaceContainerHighest
+                          .withOpacity(0.5),
+                    ],
+                  ),
+                  borderRadius: const BorderRadius.only(
+                    bottomLeft: Radius.circular(32),
+                    bottomRight: Radius.circular(32),
+                  ),
                 ),
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(32),
-                  bottomRight: Radius.circular(32),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    children: [
+                      Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary.withOpacity(0.5),
+                                theme.colorScheme.primary.withOpacity(0.2),
+                              ],
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 60,
+                            child: notifier.userProfile?.avatar == null
+                                ? Icon(Icons.person,
+                                    color: theme.colorScheme.primary, size: 80)
+                                : NetworkImageWidget(
+                                    imageUrl: notifier.userProfile!.avatar!,
+                                    width: 120,
+                                    height: 120,
+                                    borderRadius: BorderRadius.circular(60),
+                                  ),
+                          )),
+                      const SizedBox(height: 16),
+                      Text(
+                        notifier.userProfile?.name ?? 'N/A',
+                        style: theme.textTheme.headlineMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'BSC. CSIT',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(24),
+              Padding(
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            theme.colorScheme.primary.withOpacity(0.5),
-                            theme.colorScheme.primary.withOpacity(0.2),
-                          ],
+                    _buildInfoSection(
+                      title: 'Personal Information',
+                      items: [
+                        InfoItem(
+                          label: 'Full Name',
+                          value: notifier.userProfile?.name ?? 'N/A',
                         ),
-                      ),
-                      child: const CircleAvatar(
-                        radius: 60,
-                        backgroundImage: NetworkImage(
-                          'https://picsum.photos/200',
+                        InfoItem(
+                          label: 'Email',
+                          value: notifier.userProfile?.email ?? 'N/A',
                         ),
-                      ),
+                        InfoItem(
+                          label: 'Phone',
+                          value: notifier.userProfile?.phoneNumber ?? 'N/A',
+                        ),
+                        InfoItem(
+                          label: 'Address',
+                          value: notifier.userProfile?.address ?? 'N/A',
+                        ),
+                      ],
+                      icon: Icons.person_outline,
+                      theme: theme,
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'John Doe',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      'Computer Engineering',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
+                    const SizedBox(height: 20),
+                    _buildInfoSection(
+                      title: 'Academic Information',
+                      items: [
+                        const InfoItem(
+                            label: 'Roll Number', value: '076BCT099'),
+                        const InfoItem(label: 'Batch', value: '2076'),
+                        const InfoItem(label: 'Faculty', value: 'Bsc. CSIT'),
+                        const InfoItem(
+                            label: 'Semester', value: '6th Semester'),
+                      ],
+                      icon: Icons.school_outlined,
+                      theme: theme,
                     ),
                   ],
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  _buildInfoSection(
-                    title: 'Personal Information',
-                    items: [
-                      const InfoItem(label: 'Full Name', value: 'John Doe'),
-                      const InfoItem(
-                          label: 'Email', value: 'john.doe@email.com'),
-                      const InfoItem(label: 'Phone', value: '+977 9876543210'),
-                      const InfoItem(
-                          label: 'Address', value: 'Kathmandu, Nepal'),
-                    ],
-                    icon: Icons.person_outline,
-                    theme: theme,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildInfoSection(
-                    title: 'Academic Information',
-                    items: [
-                      const InfoItem(label: 'Roll Number', value: '076BCT099'),
-                      const InfoItem(label: 'Batch', value: '2076'),
-                      const InfoItem(
-                          label: 'Faculty', value: 'Computer Engineering'),
-                      const InfoItem(label: 'Semester', value: '6th Semester'),
-                    ],
-                    icon: Icons.school_outlined,
-                    theme: theme,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 

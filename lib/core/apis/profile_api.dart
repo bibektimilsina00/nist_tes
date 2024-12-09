@@ -1,54 +1,118 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:nist_tes/core/model/user_model.dart';
+import 'package:nist_tes/core/services/service_locator.dart';
+import 'package:nist_tes/core/utils/error_utils.dart';
+import 'package:nist_tes/core/utils/logger_utils.dart';
 
-import '../../app/api_client/api_client.dart';
 import '../../app/routes/api_routes.dart';
-import '../../core/utils/error_utils.dart';
-import '../model/user_model.dart';
-import '../services/cache_service.dart';
-import '../services/connectivity_service.dart';
 
 class ProfileApi {
-  final ApiClient _apiClient;
-  final ConnectivityService _connectivityService;
-  final CacheService _cacheService;
+  final _apiClient = ServiceLocator.apiClient;
+  final _connectivityService = ServiceLocator.connectivity;
+  final _cacheService = ServiceLocator.cacheService;
 
-  ProfileApi(this._apiClient, this._connectivityService, this._cacheService);
+  ProfileApi();
 
   Future<UserModel> getMyProfile() async {
     try {
-      if (await _connectivityService.isConnected()) {
-        final response = await performGetRequest(ApiRoutes.myProfile);
-        final userModel = UserModel.fromJson(response);
-        await _cacheService.storeUserProfile(jsonEncode(userModel.toJson()));
-
-        return userModel;
-      } else {
+      if (!await _connectivityService.isConnected()) {
         final cachedUserProfile = await _cacheService.getUserProfile();
         if (cachedUserProfile != null) {
+          logger.i('Fetching user profile from cache');
           return UserModel.fromJson(jsonDecode(cachedUserProfile));
         } else {
-          throw Exception(
-              "No internet connection and no cached data available");
+          throw const NoInternetException();
         }
       }
+
+      logger.i('Fetching user profile from API');
+      final response = await _apiClient.get(ApiRoutes.myProfile);
+
+      if (response.data == null) {
+        throw const ServerException('Invalid response from server');
+      }
+
+      final userModel = UserModel.fromJson(response.data);
+
+      // Cache the user profile
+      logger.i('Caching user profile data');
+      await _cacheService.storeUserProfile(jsonEncode(userModel.toJson()));
+
+      return userModel;
+    } on DioException catch (e) {
+      logger.e('DioException while fetching user profile: ${e.message}');
+      throw handleDioException(e);
+    } on AppException {
+      rethrow; // Propagate known exceptions
     } catch (e) {
-      rethrow;
+      logger.e('Unexpected error while fetching user profile: $e');
+      throw ServerException('Failed to fetch user profile: ${e.toString()}');
     }
   }
 
-  Future<Map<String, dynamic>> performGetRequest(
-    String endpoint,
-  ) async {
+  Future<void> updateProfile(UserModel user) async {
     try {
-      final response = await _apiClient.get(
-        endpoint,
+      if (!await _connectivityService.isConnected()) {
+        throw const NoInternetException();
+      }
+
+      logger.i('Updating user profile');
+      final response = await _apiClient.put(
+        ApiRoutes.myProfile,
+        data: user.toJson(),
       );
-      return response.data;
+
+      if (response.statusCode != 200) {
+        throw const ServerException('Failed to update profile');
+      }
+
+      // Update cache with new profile data
+      logger.i('Updating cached user profile data');
+      await _cacheService.storeUserProfile(jsonEncode(user.toJson()));
     } on DioException catch (e) {
-      await handleDioException(e);
+      logger.e('DioException while updating user profile: ${e.message}');
+      throw handleDioException(e);
+    } on AppException {
       rethrow;
+    } catch (e) {
+      logger.e('Unexpected error while updating user profile: $e');
+      throw ServerException('Failed to update user profile: ${e.toString()}');
+    }
+  }
+
+  Future<void> uploadProfilePicture(String filePath) async {
+    try {
+      if (!await _connectivityService.isConnected()) {
+        throw const NoInternetException();
+      }
+
+      logger.i('Uploading profile picture');
+      final formData = FormData.fromMap({
+        'profile_picture': await MultipartFile.fromFile(filePath),
+      });
+
+      final response = await _apiClient.post(
+        ApiRoutes.uploadProfilePicture,
+        data: formData,
+      );
+
+      if (response.statusCode != 200) {
+        throw const ServerException('Failed to upload profile picture');
+      }
+
+      // Optionally update cached profile with new picture URL
+      await getMyProfile(); // Refresh profile data
+    } on DioException catch (e) {
+      logger.e('DioException while uploading profile picture: ${e.message}');
+      throw handleDioException(e);
+    } on AppException {
+      rethrow;
+    } catch (e) {
+      logger.e('Unexpected error while uploading profile picture: $e');
+      throw ServerException(
+          'Failed to upload profile picture: ${e.toString()}');
     }
   }
 }
